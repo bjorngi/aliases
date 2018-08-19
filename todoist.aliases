@@ -131,7 +131,7 @@ tproject() {
 
 doNext() {
   OLD_TASK=$(todoist l | ag @active)
-  if [ -z "$OLD_TASK" ]
+  if [ -n "$OLD_TASK" ]
   then
     echo $OLD_TASK | head -n1 | tdone
   fi
