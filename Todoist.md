@@ -12,5 +12,11 @@
 - Set project: `<task-string> | tproject`
 - Change date: `<task-string> | tdate <date string>`
 
-## Resources
-[Todoist CLI (github)](https://github.com/sachaos/todoist)
+## Dependencies
+- [sachaos/todoist](https://github.com/sachaos/todoist)
+- fzf
+- ag (Silver searcher)
+
+## Setup
+1. Install dependencies
+3. `source todoist.aliases`
