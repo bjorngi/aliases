@@ -1,0 +1,147 @@
+getTasknumber() {
+  awk '{ print $1; }'
+}
+
+formatDate() {
+  date --date="$@" '+%Y/%m/%d'
+}
+
+getLabelId() {
+  while read data; do
+    todoist labels | grep $data | getTasknumber;
+  done;
+}
+
+getProjectNameFromId() {
+  todoist projects | ag $1 | awk '{ print $2 }'
+}
+
+selectProject() {
+  unbuffer todoist projects | fzf --ansi | awk '{ print $1 }'
+}
+
+selectLabels() {
+  unbuffer todoist labels | fzf -m --ansi | awk 'ORS="," { print $1 }' | sed 's/,$//'
+}
+
+getLabels() {
+  while read data; do
+    echo $data | ag -o --nocolor '@\w+';
+  done;
+}
+
+addTask() {
+  while read input; do
+    todoist add -P $(selectProject) -L $(selectLabels) "$input";
+  done;
+}
+
+addInboxTask() {
+  while read input; do
+    todoist add "$input";
+  done;
+}
+
+changeLabel() {
+  while read task; do
+    NEW_LABEL_ID=$(echo $1 | getLabelId)
+
+    if [ -z "$2" ]
+    then
+      LABELS=$(echo $task | getLabels | ag -v $1 | getLabelId)
+    else
+      LABELS=$(echo $task | getLabels | ag -v $1 | ag -v $2 | getLabelId)
+    fi
+
+    if [ -z "$LABELS" ]
+    then
+      echo $NEW_LABEL_ID | sed 's/ /,/g'
+    else
+      echo $NEW_LABEL_ID $LABELS | sed 's/ /,/g'
+    fi
+  done;
+}
+
+toCommaSeparated() {
+  sed 's/^\|$//g'|paste -sd, -
+}
+
+getTaskText() {
+  ag -o --nocolor --group '@\w+\s+\K.*'
+}
+
+tnext() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    NEW_LABELS=$(echo $task | changeLabel @next);
+    todoist m $TASK_ID -L $NEW_LABELS -d $(formatDate "today")
+    echo "  $(echo $task | getTaskText)"
+  done;
+}
+
+tlabel() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    NEW_LABELS=$(echo $task | changeLabel $1 $2);
+    todoist m $TASK_ID -L $NEW_LABELS
+  done;
+}
+
+tdelete() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    echo " $(echo $task | getTaskText)"
+    todoist d $TASK_ID
+  done;
+}
+
+tactive() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    NEW_LABELS=$(echo $task | changeLabel @active @next);
+    todoist m $TASK_ID -L $NEW_LABELS -d $(formatDate "today")
+    echo " $(echo $task | getTaskText)"
+  done;
+}
+
+tdone() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    todoist c $TASK_ID
+    echo " $(echo $task | getTaskText)"
+  done
+}
+
+tdate() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    todoist m $TASK_ID -d $(formatDate $1)
+    echo "  $(echo $task | getTaskText) to $(formatDate $1)"
+  done
+}
+
+tproject() {
+  while read task; do
+    TASK_ID=$(echo $task | getTasknumber)
+    PROJECT_ID=$(selectProject)
+    todoist m $TASK_ID -P $PROJECT_ID
+    echo "  $(echo $task | getTaskText) set to $(getProjectNameFromId $PROJECT_ID)"
+  done
+}
+
+doNext() {
+  OLD_TASK=$(todoist l | ag @active)
+  if [ -z "$OLD_TASK" ]
+  then
+    echo $OLD_TASK | head -n1 | tdone
+  fi
+
+  unbuffer todoist l | ag @next | fzf --ansi | tactive
+}
+
+alias tadd="echo | vipe | addTask"
+alias next="doNext"
+alias tinbox="echo | vipe | addInboxTask"
+alias tod="unbuffer todoist l --filter 'overdue|today|tomorrow' | fzf -m --ansi"
+alias todo='unbuffer todoist l | fzf -m --ansi'
+alias tsync='todoist s'
