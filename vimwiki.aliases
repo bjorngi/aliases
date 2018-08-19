@@ -1,0 +1,5 @@
+getWikiWithTodo() {
+  vim $(ag TODO | fzf | awk '{ print $1 }')
+}
+
+alias wtodo="cd ~/vimwiki && getWikiWithTodo && cd -"
