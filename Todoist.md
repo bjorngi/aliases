@@ -12,6 +12,11 @@
 - Set project: `<task-string> | tproject`
 - Change date: `<task-string> | tdate <date string>`
 
+## Sync
+[Crontab](Crontab) for syncing every minute
+`* * * * * tsync`
+
+
 ## Dependencies
 - [sachaos/todoist](https://github.com/sachaos/todoist)
 - fzf
@@ -19,4 +24,4 @@
 
 ## Setup
 1. Install dependencies
-3. `source todoist.aliases`
+2. `source todoist.aliases`
