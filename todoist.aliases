@@ -135,13 +135,13 @@ doNext() {
   then
     echo $OLD_TASK | head -n1 | tdone
   fi
-
   unbuffer todoist l | ag @next | fzf --ansi | tactive
 }
 
 alias tadd="echo | vipe | addTask"
 alias next="doNext"
 alias tinbox="echo | vipe | addInboxTask"
-alias tod="unbuffer todoist l --filter 'overdue|today|tomorrow' | fzf -m --ansi"
+alias tom="unbuffer todoist l --filter 'tomorrow' | fzf -m --ansi"
+alias tod="unbuffer todoist l --filter 'overdue|today' | fzf -m --ansi"
 alias todo='unbuffer todoist l | fzf -m --ansi'
 alias tsync='todoist s'
