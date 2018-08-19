@@ -1,5 +1,5 @@
 getWikiWithTodo() {
-  vim $(ag TODO | fzf | awk '{ print $1 }')
+  vim $(ag TODO | fzf -m | ag -o '^([\w\-]+\.\w+:\d+)')
 }
 
 alias wtodo="cd ~/vimwiki && getWikiWithTodo && cd -"
