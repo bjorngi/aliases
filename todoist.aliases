@@ -138,6 +138,13 @@ doNext() {
   unbuffer todoist l | ag @next | fzf --ansi | tactive
 }
 
+addBulk() {
+  while read task; do
+    todoist q $task
+    echo " $task"
+  done
+}
+
 alias tadd="echo | vipe | addTask"
 alias next="doNext"
 alias tinbox="echo | vipe | addInboxTask"
@@ -145,3 +152,4 @@ alias tom="unbuffer todoist l --filter 'tomorrow' | fzf -m --ansi"
 alias tod="unbuffer todoist l --filter 'overdue|today' | fzf -m --ansi"
 alias todo='unbuffer todoist l | fzf -m --ansi'
 alias tsync='todoist s'
+alias tbulk='echo | vipe | addBulk'
