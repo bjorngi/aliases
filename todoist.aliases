@@ -36,12 +36,6 @@ addTask() {
   done;
 }
 
-addInboxTask() {
-  while read input; do
-    todoist add "$input";
-  done;
-}
-
 changeLabel() {
   while read task; do
     NEW_LABEL_ID=$(echo $1 | getLabelId)
@@ -140,14 +134,14 @@ doNext() {
 
 addBulk() {
   while read task; do
-    todoist q $task
+    todoist q "$task"
     echo " $task"
   done
 }
 
 alias tadd="echo | vipe | addTask"
+alias tinbox="unbuffer todoist l | ag '#Inbox' | fzf -m --ansi"
 alias next="doNext"
-alias tinbox="echo | vipe | addInboxTask"
 alias tom="unbuffer todoist l --filter 'tomorrow' | fzf -m --ansi"
 alias tod="unbuffer todoist l --filter 'overdue|today' | fzf -m --ansi"
 alias todo='unbuffer todoist l | fzf -m --ansi'
