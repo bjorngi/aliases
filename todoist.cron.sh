@@ -6,3 +6,7 @@
 GOPATH=~/golang
 PATH="$GOPATH/bin:$PATH"
 todoist sync
+
+# Generate spellfiles for vim autocomplete
+todoist labels | awk '{ print $2}' > ~/.labels.spellfile
+todoist projects | awk '{ print $2}' > ~/.projects.spellfile

@@ -139,11 +139,11 @@ addBulk() {
   done
 }
 
-alias tadd="echo | vipe | addTask"
+#alias tadd="echo | vipe | addTask"
 alias tinbox="unbuffer todoist l | ag '#Inbox' | fzf -m --ansi"
 alias next="doNext"
 alias tom="unbuffer todoist l --filter 'tomorrow' | fzf -m --ansi"
 alias tod="unbuffer todoist l --filter 'overdue|today' | fzf -m --ansi"
 alias todo='unbuffer todoist l | fzf -m --ansi'
 alias tsync='todoist s'
-alias tbulk='echo | vipe | addBulk'
+alias tadd=": | EDITOR='sh /home/bjorn/aliases/vipe-editor.sh' vipe | addBulk"
